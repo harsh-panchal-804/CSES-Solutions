@@ -84,9 +84,6 @@ void remove(int x){
     if(!freq[x])curr_ans--;
 }
 
-
-
-
 void solve(){
     cin>>n;
     block_size=sqrt(n);
