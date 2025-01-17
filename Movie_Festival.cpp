@@ -44,81 +44,37 @@ template <class T> void _print(multiset <T> v) {
 template <class T, class V> void _print(map <T, V> v) {
     cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";
 }
-vector<vector<int>> graph;
-vector<int> depth;
-vector<int> parent;
-void dfs(int node,int prev=-1){
-    for(auto child: graph[node]){
-        if(child==prev)continue;
-        depth[child]=depth[node]+1;
-        dfs(child,node);
+int dp[(int)2e5+100];
+int dfs(vector<pair<int,int>> &a ,int i){
+    if(i>=a.size()){
+        return 0;
     }
-}
-void dfs2(int node,int prev=-1){
-    for(auto child:graph[node]){
-        if(child==prev)continue;
-        parent[child]=node;
-        dfs2(child,node);
-    }
+    if(dp[i]!=-1)return dp[i];
+  
+    auto next = lower_bound(a.begin(), a.end(), make_pair(a[i].second, INT_MIN)) - a.begin();
+    int op1=1+ dfs(a,next);
+    int op2=dfs(a,i+1);
+    return dp[i]=max(op1,op2);
 }
 
 
 
 void solve(){
-    int n,q;
-    cin>>n>>q;
-    graph.resize(n+1);
-    int LOG=ceil(log2(n))+1;
-    depth.resize(n+1,0);
-    vector<vector<int>> up(n+1,vector<int>(LOG));
-    parent.resize(n+1);
-    parent[1]=1;
-    for(int i=0;i<n-1;i++){
+    int n;
+    cin>>n;
+    vector<pair<int,int>> vec(n);
+    for(int i=0;i<n;i++){
         int a,b;
         cin>>a>>b;
-        graph[a].push_back(b);
-        graph[b].push_back(a);
+        vec[i]={a,b};
     }
-    dfs(1);
-    dfs2(1);
-    for(int i=1;i<=n;i++){
-        up[i][0]=parent[i];
-    }
-    for(int j=1;j<LOG;j++){
-        for(int i=1;i<=n;i++){
-            up[i][j]= up.at(up[i][j-1]).at(j-1);
-        }
-    }
-    while(q--){
-        int a,b;
-        cin>>a>>b;
-        int x=a;
-        int y=b;
-        if(depth[a]<depth[b])swap(a,b);
-        
-        int k=depth[a]-depth[b];
-        for(int i=0;i<LOG;i++){
-            if((1<<i) & k){
-                a=up[a][i];
-            }
-        }
-        if(a==b){
-            int depth_lca=depth[a];
-            cout<<depth[x] +depth[y] -2*depth_lca <<"\n";
-            continue;
-        }
-        for(int i=LOG-1;i>=0;i--){
-            if(up[a][i]!=up[b][i]){
-                a=up[a][i];
-                b=up[b][i];
-            }
-        }
-        int lca=up[a][0];
-        int depth_lca=depth[lca];
-        cout<<depth[x] +depth[y] -2*depth_lca<<"\n";
-    }
-
-
+    sort(all(vec),[&](pair<int,int>&a,pair<int,int>&b){
+        if(a.first!=b.first)return a.first<b.first;
+        else a.second<b.second;
+    });
+    memset(dp,-1,sizeof(dp));
+    int ans=dfs(vec,0);
+    cout<<ans<<"\n";
     
 }
 
