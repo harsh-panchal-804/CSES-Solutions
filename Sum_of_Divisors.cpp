@@ -44,11 +44,44 @@ template <class T> void _print(multiset <T> v) {
 template <class T, class V> void _print(map <T, V> v) {
     cerr << "[ "; for (auto i : v) {_print(i); cerr << " ";} cerr << "]";
 }
-
+const int MOD=mod;
+ll  inverse(ll  a,ll  b, ll  mod){
+    ll ans=1;
+    while(b){
+        if(b&1){
+            ans=(1ll* ans * a)%mod;
+        }
+        b>>=1;
+        a=(1ll* a * a)%mod;
+    }
+    return ans;
+}
 
 
 void solve(){
-    
+   ll n;
+    cin>>n;
+    ll ans=0;
+    for(ll i=1;i*i<=n;i++)
+    {
+        ans+=((n/i)*i)%MOD;
+        ans%=MOD;
+    }
+    ll l=(ll)sqrt(n);
+    for(ll i=sqrt(n);i>=1;i--)
+    {
+        ll r=n/i;
+        ll sum=0;
+        sum+=((((r%MOD)*((r+1)%MOD))%MOD)*inverse(2,mod-2,mod))%MOD;
+        sum%=MOD;
+        sum-=((((l%MOD)*((l+1)%MOD))%MOD)*inverse(2,mod-2,mod))%MOD;
+        sum=(sum+MOD)%MOD;
+        sum=(sum*i)%MOD;
+        l=r;
+        ans=(ans+sum)%MOD;
+        //cout<<sum<<" ";
+    }
+    cout<<ans;
 }
 
 int main() {
