@@ -121,7 +121,24 @@ chrono::duration<double> dur=end-start;
 cout<<duration_cast<milliseconds>(dur).count()<<endl;
 
 }
-
+vector<int> sieve(int n){
+    vector<bool> vec(n+1,true);
+    vec[0]=vec[1]=false;
+    for(int i=2;i<n+1;i++){
+        if(vec[i]==true){
+            for(int j=2*i;j<n+1;j+=i){
+                vec[j]=false;
+            }
+        }
+    }
+    vector<int> ans;
+    for(int i=0;i<n+1;i++){
+        if(vec[i]){
+            ans.push_back(i);
+        }
+    }
+    return ans;
+}
 void solve(){
     
 }
